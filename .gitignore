@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.py[cod]
+
+# Virtual Environments
+venv/
+env/
+.venv/
+
+# Django
+db.sqlite3
+*.log
+media/
+staticfiles/
+
+# Environment Variables
+.env
+.env.*
+
+# VS Code / IDE
+.vscode/
+.idea/
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# Custom Sensitive Files
+Superuser.txt
