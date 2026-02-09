@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 
 from pathlib import Path
 from dotenv import load_dotenv
-
+from datetime import timedelta
 import os
 load_dotenv()
 
@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     "rest_framework",
     "corsheaders",
+    "rest_framework_simplejwt.token_blacklist",
 ]
 
 EXTERNAL_APPS =[
@@ -134,13 +135,46 @@ STATIC_URL = 'static/'
 # DRF Settings
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
-        "rest_framework.authentication.SessionAuthentication",
-        "rest_framework.authentication.TokenAuthentication",
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
     ),
     "DEFAULT_PERMISSION_CLASSES": (
         "rest_framework.permissions.AllowAny",
     ),
 }
+
+#JWT Settings
+from datetime import timedelta
+
+SIMPLE_JWT = {
+    # Point 6: Token Expiration
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+
+    "ROTATE_REFRESH_TOKENS": True,
+    "BLACKLIST_AFTER_ROTATION": True,
+
+    "AUTH_HEADER_TYPES": ("Bearer",),
+
+    "USER_ID_FIELD": "id",       # UUID support
+    "USER_ID_CLAIM": "user_id",
+
+    "TOKEN_TYPE_CLAIM": "token_type",
+}
+
+# Configure Throttle Rates
+REST_FRAMEWORK["DEFAULT_THROTTLE_CLASSES"] = [
+    "rest_framework.throttling.AnonRateThrottle",
+    "rest_framework.throttling.UserRateThrottle",
+]
+
+REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"] = {
+    "anon": "100/hour",
+    "user": "1000/hour",
+
+    # Point 4: Login throttling
+    "login": "5/minute",
+}
+
 
 # CORS
 CORS_ALLOW_ALL_ORIGINS = True
