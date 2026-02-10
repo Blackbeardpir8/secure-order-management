@@ -3,7 +3,9 @@ from rest_framework import serializers
 #from django.contrib.auth.password_validation import validate_password
 from .models import User
 
-
+# =========================================
+# Register Serializers
+# =========================================
 class RegisterSerializer(serializers.ModelSerializer):
     """
     User registration serializer.
@@ -21,13 +23,14 @@ class RegisterSerializer(serializers.ModelSerializer):
         read_only_fields = ("id", "role")
 
     def create(self, validated_data):
-        user = User.objects.create_user(
-            email=validated_data["email"],
-            password=validated_data["password"],
-        )
+        user = User.objects.create_user(email=validated_data["email"],password=validated_data["password"],)
         return user
 
 
+
+# =========================================
+# Login Serializers
+# =========================================
 class LoginSerializer(serializers.Serializer):
     """
     Login serializer using email + password.
@@ -54,3 +57,30 @@ class LoginSerializer(serializers.Serializer):
 
         attrs["user"] = user
         return attrs
+
+
+# =========================================
+# Logout Serializers
+# =========================================
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework import serializers
+class LogoutSerializer(serializers.Serializer):
+    """
+    Logout serializer.
+
+    # Point 6: Token Blacklisting
+    """
+
+    refresh = serializers.CharField()
+
+    def validate(self, attrs):
+        self.token = attrs["refresh"]
+        return attrs
+
+    def save(self, **kwargs):
+        try:
+            token = RefreshToken(self.token)
+            token.blacklist()
+        except Exception:
+            # Point 9: Secure error message
+            raise serializers.ValidationError("Invalid or expired token")
