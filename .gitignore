@@ -27,3 +27,5 @@ Thumbs.db
 
 # Custom Sensitive Files
 Superuser.txt
+.postman
+postman

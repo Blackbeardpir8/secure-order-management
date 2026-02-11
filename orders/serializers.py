@@ -26,7 +26,7 @@ class OrderSerializer(serializers.ModelSerializer):
     total_amount = serializers.DecimalField(
         max_digits=10, 
         decimal_places=2, 
-        min_value=1.00 # Minimum order value of 1.00
+        min_value=("1.00") # Minimum order value of 1.00
     )
 
     class Meta:
